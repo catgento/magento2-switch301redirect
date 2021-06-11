@@ -1,6 +1,6 @@
 # Magento Switch 301 Redirect
 
-Redirects 301 to custom page in case of 404 when switching store views.
+Redirects 301 to custom page in case of 404 when switching store views from category and product pages.
 
 # Todo
 
