@@ -82,12 +82,18 @@ class RewriteUrl extends \Magento\UrlRewrite\Model\StoreSwitcher\RewriteUrl
             }
         } else {
             $existingRewrite = $this->urlFinder->findOneByData([UrlRewrite::REQUEST_PATH => $urlPath]);
-            $currentRewrite = $this->urlFinder->findOneByData(
-                [
-                    UrlRewrite::REQUEST_PATH => $urlPath,
-                    UrlRewrite::STORE_ID => $targetStore->getId(),
-                ]
-            );
+
+            try {
+                $currentRewrite = $this->urlFinder->findOneByData(
+                    [
+                        UrlRewrite::REQUEST_PATH => $urlPath,
+                        UrlRewrite::STORE_ID => $targetStore->getId(),
+                    ]
+                );
+            } catch (\Exception $e) {
+                $targetUrl = $targetStore->getBaseUrl();
+            }
+
 
             if ($existingRewrite && !$currentRewrite) {
                 /** @var Http $response */
