@@ -81,8 +81,6 @@ class RewriteUrl extends \Magento\UrlRewrite\Model\StoreSwitcher\RewriteUrl
                 }
             }
         } else {
-            $existingRewrite = $this->urlFinder->findOneByData([UrlRewrite::REQUEST_PATH => $urlPath]);
-
             try {
                 $currentRewrite = $this->urlFinder->findOneByData(
                     [
@@ -95,7 +93,7 @@ class RewriteUrl extends \Magento\UrlRewrite\Model\StoreSwitcher\RewriteUrl
             }
 
 
-            if ($existingRewrite && !$currentRewrite) {
+            if (!$currentRewrite) {
                 /** @var Http $response */
                 $targetUrl = $targetStore->getBaseUrl();
             }
