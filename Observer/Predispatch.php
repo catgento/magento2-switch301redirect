@@ -59,6 +59,7 @@ class Predispatch implements ObserverInterface
         $simpleProduct = $this->_productRepository->getById($simpleProductId, false, $this->_storeManager->getStore()->getId());
         if (!$simpleProduct
             || $simpleProduct->getTypeId() != \Magento\Catalog\Model\Product\Type::TYPE_SIMPLE
+            || $simpleProduct->getVisibility() != \Magento\Catalog\Model\Product\Visibility::VISIBILITY_NOT_VISIBLE
         ) {
             return;
         }
