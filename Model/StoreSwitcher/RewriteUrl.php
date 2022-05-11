@@ -9,32 +9,40 @@ namespace Catgento\Switch301Redirect\Model\StoreSwitcher;
 
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Api\CategoryRepositoryInterface;
+use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Response\Http;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\UrlRewrite\Model\UrlFinderInterface;
 use Magento\UrlRewrite\Service\V1\Data\UrlRewrite;
 use Magento\Framework\HTTP\PhpEnvironment\RequestFactory;
+use Magento\Store\Model\ScopeInterface;
 
 /**
  * Handle url rewrites for redirect url
  */
 class RewriteUrl extends \Magento\UrlRewrite\Model\StoreSwitcher\RewriteUrl
 {
+    const ENABLE_STOREVIEW_REDIRECT = 'redirects/general/enable_storeview_redirect';
+
     private ProductRepositoryInterface $productRepository;
     private CategoryRepositoryInterface $categoryRepository;
     private UrlFinderInterface $urlFinder;
     private RequestFactory $requestFactory;
+    private ScopeConfigInterface $scopeConfig;
 
     public function __construct(
-        ProductRepositoryInterface $productRepository,
-        CategoryRepositoryInterface $categoryRepository,
-        UrlFinderInterface $urlFinder,
-        \Magento\Framework\HTTP\PhpEnvironment\RequestFactory $requestFactory
-    ) {
+        ProductRepositoryInterface                            $productRepository,
+        CategoryRepositoryInterface                           $categoryRepository,
+        UrlFinderInterface                                    $urlFinder,
+        \Magento\Framework\HTTP\PhpEnvironment\RequestFactory $requestFactory,
+        ScopeConfigInterface $scopeConfig
+    )
+    {
         $this->productRepository = $productRepository;
         $this->categoryRepository = $categoryRepository;
         $this->urlFinder = $urlFinder;
         $this->requestFactory = $requestFactory;
+        $this->scopeConfig = $scopeConfig;
 
         parent::__construct($urlFinder, $requestFactory);
     }
@@ -49,6 +57,10 @@ class RewriteUrl extends \Magento\UrlRewrite\Model\StoreSwitcher\RewriteUrl
      */
     public function switch(StoreInterface $fromStore, StoreInterface $targetStore, string $redirectUrl): string
     {
+        if (!$this->scopeConfig->getValue(self::ENABLE_STOREVIEW_REDIRECT, ScopeInterface::SCOPE_STORE)) {
+            return parent::switch($fromStore, $targetStore, $redirectUrl);
+        }
+
         $targetUrl = $redirectUrl;
         $request = $this->requestFactory->create(['uri' => $targetUrl]);
 
@@ -110,7 +122,7 @@ class RewriteUrl extends \Magento\UrlRewrite\Model\StoreSwitcher\RewriteUrl
         if ($entityType == 'product') {
             $product = $this->getProduct($rewrite->getEntityId(), $targetStore->getId());
 
-            if ($product->getVisibility() == '1') {
+            if ($product->getVisibility() == \Magento\Catalog\Model\Product\Visibility::VISIBILITY_NOT_VISIBLE) {
                 $isVisible = false;
             }
         } elseif ($entityType == 'category') {

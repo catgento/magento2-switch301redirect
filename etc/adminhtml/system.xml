@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="catgento" translate="label" sortOrder="10">
+            <label>Catgento</label>
+        </tab>
+        <section id="redirects" translate="label" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="1">
+            <class>separator-top</class>
+            <label>301 Redirects</label>
+            <tab>catgento</tab>
+            <resource>Catgento_Switch301Redirect::catgento_config</resource>
+            <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Fix switch product store URL</label>
+                <field id="enable_storeview_redirect" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable Language Redirect To Home</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Changes the default Magento behavior: if the user changes the store language and the product/category has not been translated to that language, it redirects to home page</comment>
+                </field>
+                <field id="enable_simple_redirect" translate="label comment" sortOrder="20" type="select" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable Simple Product redirect to parent</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>If a simple product is not visible, if a user access by url, it will be redirected to the parent product (grouped or configurable)</comment>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>
